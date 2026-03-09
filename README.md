@@ -8,63 +8,76 @@ The system operates on a **dual-plane architecture**: a FastAPI backend manages 
 
 ## System Architecture
 
-The platform follows a layered pipeline architecture where raw articles flow through ingestion, NLP enrichment, vector embedding, and finally surface through multiple AI-powered intelligence modules.
+The platform follows a layered pipeline architecture where raw articles flow through ingestion, storage, processing, GenAI inference, and finally surface through the application layer.
 
 ```mermaid
-graph TB
-    subgraph Ingestion["Ingestion Plane"]
-        RSS["RSS Feeds — 80+ Sources"]
-        API["News APIs"]
-        SCRAPER["Trafilatura Scraper"]
-    end
-
-    subgraph NLP["NLP Processing Pipeline"]
-        ENT["Entity Extraction — spaCy"]
-        TOPIC["Topic Classifier"]
-        SENT["Sentiment Analyzer"]
-        GEO["Geo-Scope Classifier"]
-        LANG["Language Detector"]
-    end
-
-    subgraph Vector["Vector Intelligence"]
-        EMB["Embedding Service — MiniLM L12"]
-        FAISS["FAISS Vector Index"]
-        RAG["Page-Index RAG Pipeline"]
-    end
-
-    subgraph LLM["LLM Orchestration — AWS Bedrock"]
-        LLAMA["Llama 3.3 70B — Ask Narad + Situation Room"]
-        DEEP["DeepSeek — Narrative Conflicts + Cross-Validation"]
-        NOVA["Amazon Nova Pro — Multilingual Fallback"]
-    end
-
-    subgraph Intelligence["Intelligence Engine"]
-        ORCH["Orchestrator"]
-        CAUSAL["Causal Chain Service"]
-        EVENTS["Event Intelligence"]
-        FACTS["Fact Sheet Generator"]
-        CLUSTER["Clustering Service"]
-        SCORE["Relation Scoring"]
-    end
-
-    subgraph Storage["Storage Layer"]
-        PG["PostgreSQL + pgvector"]
-        REDIS["Redis Cache"]
-        S3["S3 / Local Storage"]
-    end
-
-    Ingestion --> NLP
-    NLP --> Vector
-    Vector --> LLM
-    LLM --> Intelligence
-    Intelligence --> Storage
-
-    style Ingestion fill:#0d1117,stroke:#30363d,color:#c9d1d9
-    style NLP fill:#0d1117,stroke:#30363d,color:#c9d1d9
-    style Vector fill:#0d1117,stroke:#30363d,color:#c9d1d9
-    style LLM fill:#0d1117,stroke:#30363d,color:#c9d1d9
-    style Intelligence fill:#0d1117,stroke:#30363d,color:#c9d1d9
-    style Storage fill:#0d1117,stroke:#30363d,color:#c9d1d9
+---
+config:
+  theme: default
+  themeVariables:
+    fontSize: 22px
+  flowchart:
+    nodeSpacing: 30
+    rankSpacing: 30
+  layout: fixed
+---
+flowchart LR
+ subgraph A["News Sources"]
+        A1["Web Feeds"]
+        A2["RSS Feeds"]
+        A3["News APIs"]
+  end
+ subgraph B["Ingestion Pipeline"]
+        B1["Scheduler<br>15 min cycle"]
+        B2["Ingestion Service"]
+        B3["Entity Extraction"]
+        B4["Embedding Generation<br>Titan Embeddings"]
+  end
+ subgraph C["Storage Layer"]
+        C1[("AWS RDS<br>PostgreSQL")]
+        C2[("pgvector Index")]
+        C3[("FAISS Vector Store")]
+  end
+ subgraph D["Processing Layer"]
+        D1["FastAPI Backend"]
+        D2["Orchestrator"]
+        D3["Event Intelligence Engine"]
+        D4["Relation Scoring"]
+  end
+ subgraph E["GenAI Layer"]
+        E1["Validation"]
+        E2["Redis Cache"]
+        E3["Amazon Bedrock"]
+        E4["Llama 3.3"]
+        E5["DeepSeek"]
+        E6["Nova Pro"]
+  end
+ subgraph F["Application Layer"]
+        F1["Next.js Frontend"]
+        F2["AWS Amplify"]
+        F3["User"]
+  end
+ subgraph G["Monitoring"]
+        G1["AWS CloudWatch"]
+  end
+    A1 --> B1
+    A2 --> B1
+    A3 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> C1 & C2 & C3
+    C1 --> D1
+    C3 --> D1
+    D1 --> D2 & G1
+    D2 --> D3
+    D3 --> D4 & E1
+    D4 --> E1
+    E1 --> E2
+    E2 --> E3
+    E3 --> E4 & E5 & E6 & F1 & G1
+    F1 --> F2
+    F2 --> F3
 ```
 
 ## Data Flow
