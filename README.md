@@ -1,4 +1,4 @@
-# Narad — GenAI-Powered Event Intelligence Platform v2.0
+# Narad — News Intelligence Platform v2.0
 
 Narad is a production-grade, multilingual event intelligence system built for the Indian news ecosystem. It ingests articles from **80+ sources** across **10+ Indian languages**, processes them through deterministic NLP pipelines, and surfaces AI-driven intelligence using AWS Bedrock LLMs. The platform provides real-time claim verification, narrative conflict detection, causal chain analysis, and state-level sentiment mapping.
 
